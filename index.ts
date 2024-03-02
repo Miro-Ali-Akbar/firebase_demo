@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, child } from "firebase/database"
+import { getDatabase, ref, set, get, remove} from "firebase/database"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -15,6 +15,36 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+function writeOrders(orderId: number, productId: number, quantity: number) {
+    const db = getDatabase();
+
+    const reference = ref(db, 'orders/' + orderId);
+
+    set(reference, {
+        orderId: orderId,
+        productId: productId,
+        quantity: quantity,
+    })
+}
+
+async function addOrder() {
+    console.log("Trying to add 50 orders");
+    let failed: string = "failed ids: ";
+    
+    for (let i = 0; i < 50; i++) {
+        const productId = Math.floor(Math.random() * 100);
+        const Product = (await get(ref(getDatabase(), 'products/' + productId.toString()))).val();
+        const amount = Math.floor(Math.random() * 200);
+
+        if (Product.quantity >= amount) {
+            writeOrders(i, productId, amount);
+        } else {
+            failed += ", " + i;
+        }
+    }
+    console.log(failed);
+}
 
 function writeProductSupplier(productId: number, supplierId: number) {
     const db = getDatabase();
@@ -68,7 +98,7 @@ const supplierNames: string[] = [
 ];
 
 function randomPhoneNumber() {
-    const number = Math.floor(Math.random() * 999999999) + 700000000;
+    const number = Math.floor(Math.random() * 99999999) + 700000000;
     return number
 }
 
@@ -79,10 +109,14 @@ function addSuppliers() {
 
 }
 
-function convert07To47(supplier) {
+async function convertSupplierPhone07To47() {
+    const allSuppliers = (await get(ref(getDatabase(), 'supplier/'))).val()
 
-    const oldNumber = 0;
-    const newNumber = oldNumber - 700000000 + 4600000000
+    for (let i = 0; i < 10; i++) {
+        const oldNumber = allSuppliers[i].phone;
+        const newNumber = oldNumber - 700000000 + 4600000000
+        writeSupplierData(allSuppliers[i].id, allSuppliers[i].name, newNumber);
+    }
 }
 
 function writeProductData(productId: number, productCode: any, quantity: number, price: number) {
@@ -120,18 +154,28 @@ function addProducts() {
 
 }
 
-function populateDb() {
+export function populateDbPartOne() {
+    console.log("Starting to populateDb");
+    console.log("Adding products")
     addProducts();
+    console.log("Adding suppliers")
     addSuppliers();
+    console.log("Adding product suppliers")
     addProductSupplier();
-
 }
 
-writeProductData(12315, "asr", 4, 20);
-console.log(getRandomCode());
-populateDb();
+export function AddordersConvertPhoneTwo() {
+    console.log("Adding orders")
+    addOrder();
+    console.log("Converting suppliers phone numbers")
+    convertSupplierPhone07To47();
+}
 
-// const message = (await get(ref(getDatabase(), 'products/'))).val();
-// console.log(message);
-//
-process.exit();
+export function deleteDbThree() {
+    console.log("Clearing Db");
+    remove(ref(getDatabase(), 'products'));
+    remove(ref(getDatabase(), 'orders'));
+    remove(ref(getDatabase(), 'productSupplier'));
+    remove(ref(getDatabase(), 'supplier'));
+
+}
