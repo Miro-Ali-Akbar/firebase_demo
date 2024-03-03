@@ -7,10 +7,10 @@ D - Delete
 * To run
 ```npm install```
 
-* First part - add items to the database - one.ts
-``` esrun one.ts ```
-alt
-``` tsc one.ts; node one.js ```
+* First part - add items to the database - one.ts\
+``` esrun one.ts ```\
+alt\
+``` tsc one.ts; node one.js ```\
 continue over next parts
 * Second part - Read and modify the database - two.ts
 * Third part - Clear the database - three.ts
