@@ -29,11 +29,11 @@ function writeOrders(orderId: number, productId: number, quantity: number) {
 }
 
 async function addOrder() {
-    console.log("Trying to add 50 orders");
+    console.log("Trying to add 10 orders");
     let failed: string = "failed ids: ";
     
-    for (let i = 0; i < 50; i++) {
-        const productId = Math.floor(Math.random() * 100);
+    for (let i = 0; i < 20; i++) {
+        const productId = Math.floor(Math.random() * 20);
         const Product = (await get(ref(getDatabase(), 'products/' + productId.toString()))).val();
         const amount = Math.floor(Math.random() * 200);
 
@@ -61,9 +61,9 @@ async function addProductSupplier() {
     const allProducts = (await get(ref(getDatabase(), 'products/'))).val()
     const allSuppliers = (await get(ref(getDatabase(), 'supplier/'))).val()
 
-    for(let i = 0; i < 100; i++) {
+    for(let i = 0; i < 20; i++) {
         const productId = allProducts[i.toString()].id;
-        const supplierId = allSuppliers[Math.floor(i / 10).toString()].id;
+        const supplierId = allSuppliers[Math.floor(i / 4).toString()].id;
 
         writeProductSupplier(productId, supplierId);
     }
@@ -103,7 +103,7 @@ function randomPhoneNumber() {
 }
 
 function addSuppliers() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
         writeSupplierData(i, supplierNames[i], randomPhoneNumber())
     }
 
@@ -112,9 +112,9 @@ function addSuppliers() {
 async function convertSupplierPhone07To47() {
     const allSuppliers = (await get(ref(getDatabase(), 'supplier/'))).val()
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
         const oldNumber = allSuppliers[i].phone;
-        const newNumber = oldNumber - 700000000 + 4600000000
+        const newNumber = oldNumber + 46000000000
         writeSupplierData(allSuppliers[i].id, allSuppliers[i].name, newNumber);
     }
 }
@@ -144,10 +144,10 @@ function getRandomCode() {
 }
 
 function addProducts() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 20; i++) {
         const random_code = getRandomCode();
         const random_quantity = Math.floor(Math.random() * 100);
-        const random_price = Math.floor(Math.random() * 200 + 20);
+        const random_price = Math.floor(Math.random() * 200 + 50);
 
         writeProductData(i,random_code, random_quantity, random_price);
     }
